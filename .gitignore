@@ -1,39 +1,55 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Environment variables
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+jspm_packages/
+
+# Testing
+/coverage
+.nyc_output
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Environment variables (can opt-in for committing if needed)
+.env*
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Next.js
-.next/
-out/
-build/
+# Vercel
+.vercel
 
-# Production
-/build
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
 # Runtime data
 pids
 *.pid
 *.seed
 *.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-node_modules/
-jspm_packages/
 
 # Optional npm cache directory
 .npm
@@ -56,22 +72,9 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-.env.test
-
-# parcel-bundler cache (https://parceljs.org/)
+# Parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
 
 # Serverless directories
 .serverless/
@@ -103,11 +106,11 @@ jspm_packages/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Logs
-logs
-*.log
+*.pem
 
 # Temporary folders
 tmp/
 temp/
+
+# Prisma generated files
+/src/generated/prisma
