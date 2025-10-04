@@ -15,6 +15,10 @@ jspm_packages/
 *.tgz
 .yarn-integrity
 
+# Large binary files
+*.node
+next-swc.win32-x64-msvc.node
+
 # Testing
 /coverage
 .nyc_output
