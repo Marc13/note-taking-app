@@ -86,9 +86,6 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -171,11 +168,6 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-};
-
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
@@ -234,18 +226,17 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "postgresql",
-  "postinstall": false,
+  "activeProvider": "sqlite",
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "fromEnvVar": null,
+        "value": "file:./dev.db"
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// Enums\nenum NoteStatus {\n  DRAFT\n  PUBLISHED\n  ARCHIVED\n}\n\n// Auth.js required models\nmodel Account {\n  id                String  @id @default(cuid())\n  userId            String\n  type              String\n  provider          String\n  providerAccountId String\n  refresh_token     String? @db.Text\n  access_token      String? @db.Text\n  expires_at        Int?\n  token_type        String?\n  scope             String?\n  id_token          String? @db.Text\n  session_state     String?\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([provider, providerAccountId])\n  @@map(\"accounts\")\n}\n\nmodel Session {\n  id           String   @id @default(cuid())\n  sessionToken String   @unique\n  userId       String\n  expires      DateTime\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"sessions\")\n}\n\nmodel User {\n  id            String    @id @default(cuid())\n  name          String?\n  email         String    @unique\n  emailVerified DateTime?\n  image         String?\n  password      String? // For email/password authentication\n  accounts      Account[]\n  sessions      Session[]\n\n  // App-specific fields\n  notes      Note[]\n  categories Category[]\n  createdAt  DateTime   @default(now())\n  updatedAt  DateTime   @updatedAt\n\n  @@map(\"users\")\n}\n\nmodel VerificationToken {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n  @@map(\"verification_tokens\")\n}\n\n// App models\nmodel Note {\n  id        String     @id @default(cuid())\n  title     String\n  content   String     @db.Text\n  status    NoteStatus @default(DRAFT)\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n\n  // Relations\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  categoryId String?\n  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)\n\n  tags NoteTags[]\n\n  @@map(\"notes\")\n}\n\nmodel Category {\n  id          String   @id @default(cuid())\n  name        String\n  description String?\n  color       String   @default(\"#3B82F6\") // Default blue color\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Relations\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n  notes  Note[]\n\n  @@unique([name, userId]) // Unique category name per user\n  @@map(\"categories\")\n}\n\nmodel Tag {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  color     String   @default(\"#6B7280\") // Default gray color\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  notes NoteTags[]\n\n  @@map(\"tags\")\n}\n\n// Junction table for many-to-many relationship between Notes and Tags\nmodel NoteTags {\n  id     String @id @default(cuid())\n  noteId String\n  tagId  String\n\n  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)\n  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)\n\n  @@unique([noteId, tagId])\n  @@map(\"note_tags\")\n}\n",
-  "inlineSchemaHash": "a915897ee8861ccf90decd98e7c00a9fc8628bfa69ab930825f44acd586c1c0b",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = \"file:./dev.db\"\n}\n\n// Enums\nenum NoteStatus {\n  DRAFT\n  PUBLISHED\n  ARCHIVED\n}\n\n// Auth.js required models\nmodel Account {\n  id                String  @id @default(cuid())\n  userId            String\n  type              String\n  provider          String\n  providerAccountId String\n  refresh_token     String?\n  access_token      String?\n  expires_at        Int?\n  token_type        String?\n  scope             String?\n  id_token          String?\n  session_state     String?\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([provider, providerAccountId])\n  @@map(\"accounts\")\n}\n\nmodel Session {\n  id           String   @id @default(cuid())\n  sessionToken String   @unique\n  userId       String\n  expires      DateTime\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"sessions\")\n}\n\nmodel User {\n  id            String    @id @default(cuid())\n  name          String?\n  email         String    @unique\n  emailVerified DateTime?\n  image         String?\n  password      String? // For email/password authentication\n  accounts      Account[]\n  sessions      Session[]\n\n  // App-specific fields\n  notes      Note[]\n  categories Category[]\n  createdAt  DateTime   @default(now())\n  updatedAt  DateTime   @updatedAt\n\n  @@map(\"users\")\n}\n\nmodel VerificationToken {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n  @@map(\"verification_tokens\")\n}\n\n// App models\nmodel Note {\n  id        String     @id @default(cuid())\n  title     String\n  content   String\n  status    NoteStatus @default(DRAFT)\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n\n  // Relations\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  categoryId String?\n  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)\n\n  tags NoteTags[]\n\n  @@map(\"notes\")\n}\n\nmodel Category {\n  id          String   @id @default(cuid())\n  name        String\n  description String?\n  color       String   @default(\"#3B82F6\") // Default blue color\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Relations\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n  notes  Note[]\n\n  @@unique([name, userId]) // Unique category name per user\n  @@map(\"categories\")\n}\n\nmodel Tag {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  color     String   @default(\"#6B7280\") // Default gray color\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  notes NoteTags[]\n\n  @@map(\"tags\")\n}\n\n// Junction table for many-to-many relationship between Notes and Tags\nmodel NoteTags {\n  id     String @id @default(cuid())\n  noteId String\n  tagId  String\n\n  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)\n  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)\n\n  @@unique([noteId, tagId])\n  @@map(\"note_tags\")\n}\n",
+  "inlineSchemaHash": "d8a2d8c1a4c4b37c3fa22701311861684a929e1d6bb9644ab5daab3f5ee37852",
   "copyEngine": true
 }
 config.dirname = '/'
@@ -263,9 +254,7 @@ config.engineWasm = {
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
+  parsed: {}
 })
 
 if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
