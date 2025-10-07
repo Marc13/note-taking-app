@@ -1,4 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MobileNav } from "@/components/mobile-nav";
+import { SidebarNav } from "@/components/sidebar-nav";
 
 export default function Home() {
   return (
@@ -6,7 +8,8 @@ export default function Home() {
       {/* Header */}
       <header role="banner" className="sticky top-0 z-50 h-16 bg-white border-b shadow-sm px-4 md:px-6">
         <div className="flex items-center justify-between h-full">
-          <div className="flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <MobileNav />
             <h1 className="text-lg md:text-xl font-bold text-primary-blue">
               My Notes App
             </h1>
@@ -18,11 +21,9 @@ export default function Home() {
       </header>
 
       {/* Sidebar Container */}
-      <aside className="fixed left-0 top-16 w-64 md:w-72 h-[calc(100vh-4rem)] bg-app-background border-r hidden lg:block overflow-y-auto p-4 md:p-6">
-        <div className="text-muted-foreground">
-          Navigation will appear here
-        </div>
-      </aside>
+      <nav className="fixed left-0 top-16 w-64 md:w-72 h-[calc(100vh-4rem)] bg-app-background border-r hidden lg:block overflow-y-auto">
+        <SidebarNav />
+      </nav>
 
       {/* Main Content Area */}
       <main 
