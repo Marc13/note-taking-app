@@ -1,4 +1,4 @@
-import { PrismaClient, NoteStatus } from '../src/generated/prisma'
+import { PrismaClient, NoteStatus } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -6,7 +6,7 @@ async function main() {
   console.log('🌱 Starting seed...')
 
   // Clean up existing data (optional - remove if you want to keep existing data)
-  await prisma.noteTags.deleteMany()
+  await prisma.noteTag.deleteMany()
   await prisma.note.deleteMany()
   await prisma.category.deleteMany()
   await prisma.tag.deleteMany()
@@ -258,7 +258,7 @@ type UserKeys = keyof User
     if (tagIds && tagIds.length > 0) {
       await Promise.all(
         tagIds.map(tagId =>
-          prisma.noteTags.create({
+          prisma.noteTag.create({
             data: {
               noteId: note.id,
               tagId: tagId,
@@ -279,7 +279,7 @@ type UserKeys = keyof User
     prisma.category.count(),
     prisma.tag.count(),
     prisma.note.count(),
-    prisma.noteTags.count(),
+    prisma.noteTag.count(),
   ])
 
   console.log('\n📊 Database Summary:')
