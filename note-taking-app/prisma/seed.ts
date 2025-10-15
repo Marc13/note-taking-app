@@ -1191,7 +1191,7 @@ Ended the day with dinner with friends. Good food, good conversation, and lots o
         data: {
           title: 'Getting Started Guide',
           category: 'Documentation',
-          tags: ['Tutorial', 'Quick Win', 'Important'],
+          tags: 'Tutorial, Quick Win, Important',
           content: `Welcome to our platform! This guide will help you get up and running in just a few minutes.
 
 ## Account Setup
@@ -1216,7 +1216,7 @@ If you need assistance, check out our comprehensive documentation or contact our
         data: {
           title: 'API Documentation',
           category: 'Reference',
-          tags: ['Reference', 'Tutorial', 'Important'],
+          tags: 'Reference, Tutorial, Important',
           content: `Our API provides programmatic access to all platform features. This documentation covers authentication, endpoints, and best practices.
 
 ## Authentication
@@ -1241,7 +1241,7 @@ Always use HTTPS for API requests. Implement exponential backoff for retries. Ca
         data: {
           title: 'Best Practices for Note Organization',
           category: 'Guide',
-          tags: ['Tutorial', 'Long-term', 'Reference'],
+          tags: 'Tutorial, Long-term, Reference',
           content: `Effective note organization is key to maximizing productivity. Here are proven strategies to keep your notes organized and easily accessible.
 
 ## Use a Consistent Naming Convention
@@ -1266,7 +1266,7 @@ Take advantage of search features to find notes quickly. Use filters to narrow d
         data: {
           title: 'Common Troubleshooting Steps',
           category: 'Support',
-          tags: ['Reference', 'Quick Win'],
+          tags: 'Reference, Quick Win',
           content: `Encountering issues? This guide covers the most common problems and their solutions.
 
 ## Login Problems
@@ -1291,7 +1291,7 @@ If these steps don't resolve your issue, contact our support team at support@exa
         data: {
           title: 'Feature Overview and Capabilities',
           category: 'Documentation',
-          tags: ['Tutorial', 'Reference', 'Important', 'Quick Win'],
+          tags: 'Tutorial, Reference, Important, Quick Win',
           content: `Our platform offers a comprehensive suite of features designed to enhance your productivity and organization.
 
 ## Note Management
@@ -1316,7 +1316,7 @@ Templates for common note types save time. Daily notes feature for journaling an
         data: {
           title: 'Integration Guide for Third-Party Tools',
           category: 'Tutorial',
-          tags: ['Tutorial', 'Reference', 'Long-term'],
+          tags: 'Tutorial, Reference, Long-term',
           content: `Extend the functionality of our platform by integrating with your favorite tools and services.
 
 ## Slack Integration
@@ -1341,7 +1341,7 @@ Configure webhooks to receive real-time notifications of events. Set up webhook 
         data: {
           title: 'Frequently Asked Questions',
           category: 'FAQ',
-          tags: ['Reference', 'Quick Win', 'Review'],
+          tags: 'Reference, Quick Win, Review',
           content: `Quick answers to the most commonly asked questions about our platform.
 
 ## General Questions

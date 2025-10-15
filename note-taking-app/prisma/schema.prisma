@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Enums
@@ -86,7 +86,7 @@ model VerificationToken {
 model Note {
   id        String     @id @default(cuid())
   title     String
-  content   String     @db.Text
+  content   String
   status    NoteStatus @default(DRAFT)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -149,7 +149,7 @@ model NoteTag {
 model DailyNote {
   id        String   @id @default(cuid())
   date      DateTime @unique
-  content   String   @db.Text
+  content   String
   mood      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,7 +161,7 @@ model DailyNote {
 model Task {
   id          String       @id @default(cuid())
   title       String
-  description String?      @db.Text
+  description String?
   completed   Boolean      @default(false)
   priority    TaskPriority @default(LOW)
   dueDate     DateTime?
@@ -180,7 +180,7 @@ model Task {
 model Project {
   id          String   @id @default(cuid())
   name        String
-  description String?  @db.Text
+  description String?
   status      String
   progress    Int      @default(0) // Percentage 0-100
   createdAt   DateTime @default(now())
@@ -197,7 +197,7 @@ model Template {
   id          String   @id @default(cuid())
   name        String
   description String?
-  content     String   @db.Text
+  content     String
   category    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -208,9 +208,9 @@ model Template {
 model KnowledgeArticle {
   id        String   @id @default(cuid())
   title     String
-  content   String   @db.Text
+  content   String
   category  String?
-  tags      String[] // Array of tag names
+  tags      String   // Comma-separated tag names (SQLite doesn't support arrays)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
