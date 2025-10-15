@@ -156,13 +156,11 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
         {
           title: {
             contains: searchQuery,
-            mode: "insensitive",
           },
         },
         {
           content: {
             contains: searchQuery,
-            mode: "insensitive",
           },
         },
       ];

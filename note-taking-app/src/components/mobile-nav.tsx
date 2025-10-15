@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { SidebarNav } from './sidebar-nav';
@@ -23,6 +24,7 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-72 p-0 bg-app-background">
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <SidebarNav />
       </SheetContent>
     </Sheet>

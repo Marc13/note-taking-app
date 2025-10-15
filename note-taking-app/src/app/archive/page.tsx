@@ -144,13 +144,11 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
         {
           title: {
             contains: searchQuery,
-            mode: "insensitive",
           },
         },
         {
           content: {
             contains: searchQuery,
-            mode: "insensitive",
           },
         },
       ];
