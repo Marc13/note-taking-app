@@ -6,11 +6,20 @@ import { ArrowLeft } from "lucide-react";
 import { CreateCategoryForm } from "@/components/create-category-form";
 import { createCategory } from "./actions";
 
+/**
+ * Page metadata for SEO
+ */
 export const metadata = {
   title: "Create New Category - My Notes App",
   description: "Create a new category to organize your notes",
 };
 
+/**
+ * New Category Page Component
+ * 
+ * This page allows users to create a new category with a name, description, and color.
+ * It includes breadcrumb navigation, a back button, and the create category form.
+ */
 export default function NewCategoryPage() {
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-3xl">

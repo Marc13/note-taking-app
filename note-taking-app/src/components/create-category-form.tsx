@@ -9,10 +9,19 @@ import { Save, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+/**
+ * Props for the CreateCategoryForm component
+ */
 interface CreateCategoryFormProps {
   action: (formData: FormData) => Promise<{ error?: string } | void>;
 }
 
+/**
+ * Submit Button Component
+ * 
+ * Displays a button that shows loading state while form is being submitted.
+ * Uses useFormStatus hook to determine if form is pending.
+ */
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -37,6 +46,10 @@ function SubmitButton() {
   );
 }
 
+/**
+ * Preset color options for quick selection
+ * Users can choose from these common colors or pick a custom color
+ */
 const DEFAULT_COLORS = [
   { name: "Blue", value: "#0046FF" },
   { name: "Teal", value: "#73C8D2" },
@@ -48,15 +61,34 @@ const DEFAULT_COLORS = [
   { name: "Yellow", value: "#F59E0B" },
 ];
 
+/**
+ * Create Category Form Component
+ * 
+ * A client component that provides an interactive form for creating categories.
+ * Features:
+ * - Name input (required)
+ * - Description textarea (optional)
+ * - Color picker with preset and custom options
+ * - Real-time color preview
+ * - Form validation and error display
+ * - Loading state during submission
+ * 
+ * @param action - Server action to handle form submission
+ */
 export function CreateCategoryForm({ action }: CreateCategoryFormProps) {
+  // State management
   const [error, setError] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>("#0046FF");
   const [customColor, setCustomColor] = useState<string>("#0046FF");
   const [useCustom, setUseCustom] = useState(false);
 
+  /**
+   * Handle form submission
+   * Clears errors, sets the color value, and calls the server action
+   */
   async function handleSubmit(formData: FormData) {
     setError(null);
-    // Set the final color value
+    // Set the final color value based on whether user selected preset or custom
     formData.set("color", useCustom ? customColor : selectedColor);
     const result = await action(formData);
     if (result && result.error) {

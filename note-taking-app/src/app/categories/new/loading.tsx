@@ -1,6 +1,12 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * Loading State for New Category Page
+ * 
+ * Displays skeleton placeholders while the page is loading.
+ * Matches the layout of the actual new category page for smooth transitions.
+ */
 export default function NewCategoryLoading() {
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-3xl">
