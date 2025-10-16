@@ -5,7 +5,15 @@ import prisma from "@/lib/prisma";
 import { NoteStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export async function createNote(formData: FormData) {
+/**
+ * Server Action: Update an existing note
+ * 
+ * Updates a note's title, content, status, category, and tags.
+ * 
+ * @param noteId - The ID of the note to update
+ * @param formData - FormData containing the updated note fields
+ */
+export async function updateNote(noteId: string, formData: FormData) {
   // Extract form data
   const title = formData.get("title") as string;
   const content = formData.get("content") as string;
@@ -21,33 +29,29 @@ export async function createNote(formData: FormData) {
   }
 
   try {
-    // Get the first user (since we don't have authentication yet)
-    const user = await prisma.user.findFirst();
-
-    if (!user) {
-      return {
-        error: "No user found. Please run the seed command first.",
-      };
-    }
-
-    // Create the note
-    const note = await prisma.note.create({
+    // Update the note
+    await prisma.note.update({
+      where: { id: noteId },
       data: {
         title: title.trim(),
         content: content.trim(),
         status: status as NoteStatus,
-        userId: user.id,
         categoryId: categoryId && categoryId !== "none" ? categoryId : null,
       },
     });
 
-    // Create tag relationships if tags were selected
+    // Delete existing tag relationships
+    await prisma.noteTag.deleteMany({
+      where: { noteId },
+    });
+
+    // Create new tag relationships if tags were selected
     if (selectedTags.length > 0) {
       await Promise.all(
         selectedTags.map((tagId) =>
           prisma.noteTag.create({
             data: {
-              noteId: note.id,
+              noteId: noteId,
               tagId: tagId,
             },
           })
@@ -55,21 +59,22 @@ export async function createNote(formData: FormData) {
       );
     }
 
-    // Revalidate the notes page to show the new note
+    // Revalidate relevant pages
     revalidatePath("/notes");
+    revalidatePath(`/notes/${noteId}`);
     revalidatePath("/dashboard");
 
-    // Redirect to the newly created note
-    redirect(`/notes/${note.id}`);
+    // Redirect to the updated note
+    redirect(`/notes/${noteId}`);
   } catch (error: any) {
     // Check if this is a redirect error (Next.js redirects throw errors)
     if (error?.digest?.startsWith('NEXT_REDIRECT')) {
       throw error;
     }
     
-    console.error("Error creating note:", error);
+    console.error("Error updating note:", error);
     return {
-      error: "Failed to create note. Please try again.",
+      error: "Failed to update note. Please try again.",
     };
   }
 }

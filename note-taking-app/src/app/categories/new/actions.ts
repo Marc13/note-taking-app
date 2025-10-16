@@ -75,7 +75,12 @@ export async function createCategory(formData: FormData) {
 
     // Redirect to the categories page to show the newly created category
     redirect("/categories");
-  } catch (error) {
+  } catch (error: any) {
+    // Check if this is a redirect error (Next.js redirects throw errors)
+    if (error?.digest?.startsWith('NEXT_REDIRECT')) {
+      throw error;
+    }
+    
     console.error("Error creating category:", error);
     return {
       error: "Failed to create category. Please try again.",

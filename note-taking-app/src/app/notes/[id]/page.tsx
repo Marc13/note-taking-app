@@ -5,9 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Edit, Trash2, ArrowLeft } from "lucide-react";
+import { Edit, ArrowLeft } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Note, NoteStatus } from "@prisma/client";
+import { DeleteNoteButton } from "@/components/delete-note-button";
+import { deleteNote } from "./actions";
 
 // Helper function to format dates
 function formatDate(date: Date): string {
@@ -240,10 +242,11 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
                 Edit Note
               </Link>
             </Button>
-            <Button variant="destructive" size="default">
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Note
-            </Button>
+            <DeleteNoteButton
+              noteId={note.id}
+              noteTitle={note.title}
+              action={deleteNote}
+            />
           </div>
 
           {/* Related Notes Section */}
