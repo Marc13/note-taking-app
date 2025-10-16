@@ -35,16 +35,17 @@ function getStatusColor(status: NoteStatus): string {
 }
 
 interface NoteDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Generate metadata for the note
 export async function generateMetadata({ params }: NoteDetailPageProps) {
   try {
+    const { id } = await params;
     const note = await prisma.note.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: {
         title: true,
         content: true,
@@ -76,9 +77,13 @@ export async function generateMetadata({ params }: NoteDetailPageProps) {
 
 export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
   try {
+    const { id } = await params;
+    
+    console.log("Fetching note with ID:", id);
+    
     // Fetch the note with all related data
     const note = await prisma.note.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         category: true,
         tags: {
@@ -89,8 +94,11 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
       },
     });
 
+    console.log("Note found:", note ? "Yes" : "No");
+
     // If note doesn't exist, return 404
     if (!note) {
+      console.log("Note not found, returning 404");
       notFound();
     }
 

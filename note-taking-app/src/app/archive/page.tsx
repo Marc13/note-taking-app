@@ -1,15 +1,14 @@
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArchiveRestore, Search, ArrowLeft } from "lucide-react";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ArrowLeft } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { NoteStatus } from "@prisma/client";
 import { ArchiveFilters } from "@/components/archive-filters";
+import { ArchivedNoteCard } from "@/components/archived-note-card";
+import { ArchivedNoteMobileCard } from "@/components/archived-note-mobile-card";
 
 export const metadata = {
   title: "Archive - My Notes App",
@@ -121,6 +120,7 @@ interface ArchivePageProps {
     page?: string;
     search?: string;
     dateFilter?: string;
+    category?: string;
   }>;
 }
 
@@ -130,6 +130,7 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
     const currentPage = parseInt(params.page || "1");
     const searchQuery = params.search || "";
     const dateFilter = params.dateFilter || "all";
+    const categoryFilter = params.category || "";
     const itemsPerPage = 10;
     const skip = (currentPage - 1) * itemsPerPage;
 
@@ -178,8 +179,13 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
       };
     }
 
+    // Category filter
+    if (categoryFilter && categoryFilter !== "all") {
+      whereClause.categoryId = categoryFilter;
+    }
+
     // Execute queries in parallel
-    const [archivedNotes, totalNotes] = await Promise.all([
+    const [archivedNotes, totalNotes, categories] = await Promise.all([
       // Get paginated archived notes
       prisma.note.findMany({
         where: whereClause,
@@ -199,6 +205,16 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
       // Get total count for pagination
       prisma.note.count({
         where: whereClause,
+      }),
+
+      // Get all categories for filter dropdown
+      prisma.category.findMany({
+        select: {
+          id: true,
+          name: true,
+          color: true,
+        },
+        orderBy: { name: "asc" },
       }),
     ]);
 
@@ -239,7 +255,7 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
 
         {/* Search and Filters */}
         <div className="mb-6">
-          <ArchiveFilters />
+          <ArchiveFilters categories={categories} />
         </div>
 
         {/* Empty States */}
@@ -271,44 +287,10 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
               </TableHeader>
               <TableBody>
                 {archivedNotes.map((note) => (
-                  <TableRow key={note.id} className="hover:bg-muted/50">
-                    <TableCell>
-                      <div>
-                        <Link
-                          href={`/notes/${note.id}`}
-                          className="font-medium text-foreground hover:text-[#0046FF] transition-colors"
-                        >
-                          {note.title}
-                        </Link>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {truncateText(note.content)}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {note.category ? (
-                        <Badge variant="outline" className="text-xs">
-                          {note.category.name}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">No category</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatDate(new Date(note.updatedAt))}
-                    </TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="text-[#73C8D2] border-[#73C8D2] hover:bg-[#73C8D2] hover:text-white"
-                        aria-label={`Restore ${note.title}`}
-                      >
-                        <ArchiveRestore className="h-4 w-4 mr-2" />
-                        Restore
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  <ArchivedNoteCard
+                    key={note.id}
+                    note={note}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -318,59 +300,10 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
         {/* Archived Notes List - Mobile Card View */}
         <div className="md:hidden space-y-4">
           {archivedNotes.map((note) => (
-            <Card key={note.id} className="bg-white shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg">
-                    <Link
-                      href={`/notes/${note.id}`}
-                      className="text-foreground hover:text-[#0046FF] transition-colors"
-                    >
-                      {note.title}
-                    </Link>
-                  </CardTitle>
-                  <Badge
-                    className="bg-[#73C8D2] text-white hover:bg-[#73C8D2]/90"
-                    variant="default"
-                  >
-                    Archived
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-3">
-                  {truncateText(note.content, 150)}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    {note.category && (
-                      <Badge variant="outline" className="text-xs">
-                        {note.category.name}
-                      </Badge>
-                    )}
-                    {note.tags.slice(0, 2).map((noteTag) => (
-                      <Badge key={noteTag.tag.id} variant="secondary" className="text-xs">
-                        {noteTag.tag.name}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {formatDate(new Date(note.updatedAt))}
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="w-full text-[#73C8D2] border-[#73C8D2] hover:bg-[#73C8D2] hover:text-white"
-                    aria-label={`Restore ${note.title}`}
-                  >
-                    <ArchiveRestore className="h-4 w-4 mr-2" />
-                    Restore Note
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <ArchivedNoteMobileCard
+              key={note.id}
+              note={note}
+            />
           ))}
         </div>
 

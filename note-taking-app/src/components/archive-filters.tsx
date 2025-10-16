@@ -6,7 +6,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search } from "lucide-react";
 import { useState, useTransition, useEffect, useRef } from "react";
 
-export function ArchiveFilters() {
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+}
+
+interface ArchiveFiltersProps {
+  categories: Category[];
+}
+
+export function ArchiveFilters({ categories }: ArchiveFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -79,7 +89,23 @@ export function ArchiveFilters() {
     });
   };
 
+  const handleCategoryFilter = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (value && value !== "all") {
+      params.set("category", value);
+    } else {
+      params.delete("category");
+    }
+    params.delete("page"); // Reset to page 1 on filter
+
+    startTransition(() => {
+      router.push(`/archive?${params.toString()}`);
+    });
+  };
+
   const currentDateFilter = searchParams.get("dateFilter") || "all";
+  const currentCategoryFilter = searchParams.get("category") || "all";
 
   return (
     <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
@@ -96,8 +122,35 @@ export function ArchiveFilters() {
         />
       </div>
 
-      {/* Date Filter */}
+      {/* Filters */}
       <div className="flex flex-wrap gap-4">
+        {/* Category Filter */}
+        <Select
+          key={`category-${currentCategoryFilter}`}
+          defaultValue={currentCategoryFilter}
+          onValueChange={handleCategoryFilter}
+          disabled={isPending}
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  {category.name}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Date Filter */}
         <Select
           key={`date-${currentDateFilter}`}
           defaultValue={currentDateFilter}
