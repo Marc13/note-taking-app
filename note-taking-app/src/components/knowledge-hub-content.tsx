@@ -1,10 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Edit, Trash2 } from "lucide-react";
+import { DeleteArticleButton } from "./delete-article-button";
+import { deleteArticle } from "@/app/knowledge-hub/[id]/actions";
 
 /**
  * Knowledge Article type
@@ -83,9 +87,31 @@ export function KnowledgeHubContent({ article, relatedArticles, onArticleSelect 
     <Card className="h-full hidden md:block">
       <ScrollArea className="h-[calc(100vh-200px)]">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-foreground">
-            {article.title}
-          </CardTitle>
+          <div className="flex items-start justify-between gap-4">
+            <CardTitle className="text-2xl font-bold text-foreground flex-1">
+              {article.title}
+            </CardTitle>
+            
+            {/* Edit and Delete Buttons */}
+            <div className="flex gap-2">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="hover:bg-[#0046FF]/10 hover:text-[#0046FF] hover:border-[#0046FF]"
+              >
+                <Link href={`/knowledge-hub/${article.id}/edit`}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Link>
+              </Button>
+              <DeleteArticleButton
+                articleId={article.id}
+                articleTitle={article.title}
+                action={deleteArticle}
+              />
+            </div>
+          </div>
           
           {/* Category and Date */}
           <div className="flex flex-wrap items-center gap-3 pt-2">

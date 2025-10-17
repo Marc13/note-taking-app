@@ -4,8 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState, useTransition } from "react";
 
 /**
@@ -146,33 +145,34 @@ export function KnowledgeHubFilters({ categories, tags, currentTag }: KnowledgeH
             Filter by tag:
           </p>
           <div className="flex flex-wrap gap-2">
-            {currentTag && (
+            {/* "All" Tag - Always visible */}
+            <Badge
+              variant={!currentTag ? "default" : "outline"}
+              className={
+                !currentTag
+                  ? "bg-[#0046FF] hover:bg-[#0046FF]/90 cursor-pointer text-white"
+                  : "cursor-pointer hover:bg-[#0046FF]/10 hover:text-[#0046FF] hover:border-[#0046FF]"
+              }
+              onClick={clearTagFilter}
+            >
+              All
+            </Badge>
+            
+            {/* Individual Tags */}
+            {tags.map((tag) => (
               <Badge
-                variant="default"
-                className="bg-[#0046FF] hover:bg-[#0046FF]/90 cursor-pointer"
+                key={tag}
+                variant={currentTag === tag ? "default" : "outline"}
+                className={
+                  currentTag === tag
+                    ? "bg-[#0046FF] hover:bg-[#0046FF]/90 cursor-pointer text-white"
+                    : "cursor-pointer hover:bg-[#0046FF]/10 hover:text-[#0046FF] hover:border-[#0046FF]"
+                }
+                onClick={() => handleTagFilter(tag)}
               >
-                {currentTag}
-                <button
-                  onClick={clearTagFilter}
-                  className="ml-1 hover:bg-white/20 rounded-full p-0.5"
-                  aria-label="Clear tag filter"
-                >
-                  <X className="h-3 w-3" />
-                </button>
+                {tag}
               </Badge>
-            )}
-            {tags
-              .filter((tag) => tag !== currentTag)
-              .map((tag) => (
-                <Badge
-                  key={tag}
-                  variant="outline"
-                  className="cursor-pointer hover:bg-[#0046FF]/10 hover:text-[#0046FF] hover:border-[#0046FF]"
-                  onClick={() => handleTagFilter(tag)}
-                >
-                  {tag}
-                </Badge>
-              ))}
+            ))}
           </div>
         </div>
       )}

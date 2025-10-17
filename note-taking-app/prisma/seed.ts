@@ -952,7 +952,7 @@ Ended the day with dinner with friends. Good food, good conversation, and lots o
         data: {
           name: 'Website Redesign',
           description: 'Complete overhaul of the company website with modern design, improved UX, and better performance. Focus on mobile-first approach and accessibility.',
-          status: 'active',
+          status: 'ACTIVE',
           progress: 65,
           createdAt: daysAgo(45),
           updatedAt: daysAgo(2),
@@ -962,7 +962,7 @@ Ended the day with dinner with friends. Good food, good conversation, and lots o
         data: {
           name: 'Mobile App V2',
           description: 'Second version of our mobile application with enhanced features, better offline support, and improved performance. Complete rewrite using React Native.',
-          status: 'active',
+          status: 'ACTIVE',
           progress: 35,
           createdAt: daysAgo(38),
           updatedAt: daysAgo(1),
@@ -972,7 +972,7 @@ Ended the day with dinner with friends. Good food, good conversation, and lots o
         data: {
           name: 'Documentation Overhaul',
           description: 'Comprehensive update of all technical documentation including API docs, user guides, and developer onboarding materials.',
-          status: 'completed',
+          status: 'COMPLETED',
           progress: 100,
           createdAt: daysAgo(60),
           updatedAt: daysAgo(15),
@@ -982,7 +982,7 @@ Ended the day with dinner with friends. Good food, good conversation, and lots o
         data: {
           name: 'Q1 Marketing Campaign',
           description: 'Multi-channel marketing campaign for Q1 including social media, email marketing, content creation, and paid advertising.',
-          status: 'active',
+          status: 'ACTIVE',
           progress: 20,
           createdAt: daysAgo(25),
           updatedAt: daysAgo(3),

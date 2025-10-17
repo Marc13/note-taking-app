@@ -5,8 +5,10 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, BookOpen } from "lucide-react";
+import { ChevronDown, ChevronUp, BookOpen, Edit, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { DeleteArticleButton } from "./delete-article-button";
+import { deleteArticle } from "@/app/knowledge-hub/[id]/actions";
 
 /**
  * Knowledge Article type
@@ -163,6 +165,26 @@ export function KnowledgeArticleCard({ article, allArticles }: KnowledgeArticleC
               ))}
             </div>
           )}
+
+          {/* Edit and Delete Buttons */}
+          <div className="flex gap-2 pt-2">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="hover:bg-[#0046FF]/10 hover:text-[#0046FF] hover:border-[#0046FF]"
+            >
+              <Link href={`/knowledge-hub/${article.id}/edit`}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </Link>
+            </Button>
+            <DeleteArticleButton
+              articleId={article.id}
+              articleTitle={article.title}
+              action={deleteArticle}
+            />
+          </div>
         </div>
       </CardHeader>
 

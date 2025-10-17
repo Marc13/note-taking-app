@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { KnowledgeHubFilters } from "@/components/knowledge-hub-filters";
 import { KnowledgeHubLayout } from "@/components/knowledge-hub-layout";
@@ -54,12 +54,8 @@ export default async function KnowledgeHubPage({ searchParams }: KnowledgeHubPag
       whereClause.category = categoryFilter;
     }
 
-    // Filter by tag (SQLite uses comma-separated string, not array)
-    if (tagFilter && tagFilter !== "all") {
-      whereClause.tags = {
-        contains: tagFilter,
-      };
-    }
+    // Note: Tag filtering will be done client-side for accuracy
+    // (SQLite contains might match partial strings)
 
     // Fetch all articles from database
     const [allArticles, categories] = await Promise.all([
@@ -81,13 +77,24 @@ export default async function KnowledgeHubPage({ searchParams }: KnowledgeHubPag
       }),
     ]);
 
-    // Client-side filtering for case-insensitive search (SQLite limitation)
+    // Client-side filtering for search and tags (SQLite limitations)
     let articles = allArticles;
+    
+    // Filter by search query
     if (searchQuery) {
-      articles = allArticles.filter((article) => {
+      articles = articles.filter((article) => {
         const titleMatch = article.title.toLowerCase().includes(searchLower);
         const contentMatch = article.content.toLowerCase().includes(searchLower);
         return titleMatch || contentMatch;
+      });
+    }
+    
+    // Filter by tag (exact match in comma-separated list)
+    if (tagFilter && tagFilter !== "all") {
+      articles = articles.filter((article) => {
+        if (!article.tags) return false;
+        const articleTags = article.tags.split(",").map((tag) => tag.trim());
+        return articleTags.includes(tagFilter);
       });
     }
 
@@ -125,9 +132,20 @@ export default async function KnowledgeHubPage({ searchParams }: KnowledgeHubPag
 
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-            Knowledge Hub
-          </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              Knowledge Hub
+            </h1>
+            <Button
+              asChild
+              className="bg-[#0046FF] hover:bg-[#0046FF]/90 text-white w-full sm:w-auto"
+            >
+              <Link href="/knowledge-hub/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Create New Article
+              </Link>
+            </Button>
+          </div>
           <p className="text-muted-foreground">
             Browse documentation, guides, and helpful resources ({articles.length} articles)
           </p>
