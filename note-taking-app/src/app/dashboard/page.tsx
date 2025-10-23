@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft } from "lucide-react";
 import prisma from "@/lib/prisma";
-import { Note, NoteStatus } from "@prisma/client";
+import { NoteStatus } from "@prisma/client";
+import { AppLayout } from "@/components/app-layout";
 
 export const metadata = {
   title: "Dashboard - My Notes App",
@@ -115,6 +116,7 @@ export default async function DashboardPage() {
     const hasNoNotes = totalNotes === 0;
 
     return (
+      <AppLayout>
       <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl">
         {/* Back Button */}
         <div className="mb-4">
@@ -352,11 +354,13 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+      </AppLayout>
     );
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
 
     return (
+      <AppLayout>
       <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl">
         {/* Back Button */}
         <div className="mb-4">
@@ -385,6 +389,7 @@ export default async function DashboardPage() {
           </AlertDescription>
         </Alert>
       </div>
+      </AppLayout>
     );
   }
 }
